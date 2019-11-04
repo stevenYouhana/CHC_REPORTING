@@ -53,7 +53,7 @@ function _formatMiniRep(field, rawRecord, textOb) {
   prevStage = stage;
 }
 
-function _miniRptWork(compiledData) {  
+function _miniRptWork(compiledData) {
   var sheet = SpreadsheetApp.getActiveSheet();
   var data = sheet.getDataRange().getValues();
   _init(data);
@@ -72,11 +72,14 @@ function _miniRptWork(compiledData) {
 }
 
 function miniReport() {
-  _miniRptSave(_miniRptWork(_fullReportWork()), "MiniReport");
+  _miniRptSave(_miniRptWork(_fullReportWork()), "MiniReport", null);
 }
 
-function _miniRptSave(arr, file) {  
-  var totalText = '';
+function _miniRptSave(arr, file, name) {
+  var totalText;
+  Logger.log('name: '+name)
+  if (name) totalText = '🧾 FRUIT SUMMARY (' + name + '): ' + SCJ_newDate() +'\n';  
+  else totalText = '🧾 FRUIT SUMMARY '+SCJ_newDate() +'\n';
   arr.forEach(function(el) {    
     totalText += el;
   });

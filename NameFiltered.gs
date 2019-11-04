@@ -23,7 +23,8 @@ function NameFilter_MiniRpt() {
   var filterData =  data.filter(function(el) {
     return el[0].toLowerCase() == selectedName.toLowerCase();
   });
-  _miniRptSave(_miniRptWork(_nameFilterWork(filterData)), selectedName+"_MiniReport");
+  _miniRptSave(_miniRptWork(_nameFilterWork(filterData)), 
+               _nameConvention(selectedName)+"_MiniReport", _nameConvention(selectedName));
 }
 
 function _nameFilterWork(compiledData) {  
