@@ -16,7 +16,7 @@ var stageSorted = {
 };
 
  
-function _init(activeCells) {
+function _init(activeCells) {  
   FIELDS = activeCells[0].map(function(el) {
     
     return el.toString();
@@ -104,7 +104,7 @@ function _fullRptSave(compiledData, file) {
 
 function fullReport() {
   var sheet = SpreadsheetApp.getActiveSheet();
-  var data = sheet.getDataRange().getValue();
+  var data = sheet.getDataRange().getValues();
   _fullRptSave(_fullReportWork(data), "FullReport");
 }
 

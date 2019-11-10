@@ -22,7 +22,6 @@ function _droppedRptWord(name) {
 }
 
 function nameFilter_DroppedMini() {
-  droppedSheet.getSelection().getActiveRange().getValue().toString();  
   var sheet = SpreadsheetApp.getActiveSheet();
   _init(sheet.getDataRange().getValues());
   var selectedName = sheet.getSelection().getActiveRange().getValue().toString();
