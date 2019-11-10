@@ -57,7 +57,7 @@ function _miniRptWork(compiledData) {
   var sheet = SpreadsheetApp.getActiveSheet();
   var data = sheet.getDataRange().getValues();
   _init(data);
-  
+//  Logger.log(compiledData);
   var textOb = {text: '', stage: null};
   var finalText = '';
   Object.keys(compiledData).forEach(function(stageData, l) {       
@@ -72,16 +72,31 @@ function _miniRptWork(compiledData) {
 }
 
 function miniReport() {
-  _miniRptSave(_miniRptWork(_fullReportWork()), "MiniReport", null);
+  var sheet = SpreadsheetApp.getActiveSheet();
+  
+  var data = sheet.getDataRange().getValues();
+  _miniRptSave(_miniRptWork(_fullReportWork(data)), "MiniReport", null, AVAILABLE_SHEETS["active"]);
 }
 
-function _miniRptSave(arr, file, name) {
+function _miniRptSave(arr, file, name, sheetType) { 
   var totalText;
-  Logger.log('name: '+name)
-  if (name) totalText = '🧾 FRUIT SUMMARY (' + name + '): ' + SCJ_newDate() +'\n';  
-  else totalText = '🧾 FRUIT SUMMARY '+SCJ_newDate() +'\n';
+  switch(sheetType) {
+    case AVAILABLE_SHEETS["active"]: 
+      if (name) totalText = '🧾 FRUIT SUMMARY (' + name + '): ' + SCJ_newDate() +'\n';
+      else totalText = '🧾 FRUIT SUMMARY '+ SCJ_newDate() +'\n';
+      break;
+    case AVAILABLE_SHEETS["centre"]: Logger.log("CTR reports comings soon :)");
+      break;
+    default: Logger.log("switch(sheetType) { : default: ");
+//      Logger.log('name: '+name);
+      if (name) totalText = '🧾 DROPPED AND LONG-TERM FRUIT SUMMARY (' + name + '): ' + SCJ_newDate() +'\n'; 
+      else totalText = '🧾 DROPPED AND LONG-TERM FRUIT SUMMARY '+ SCJ_newDate() +'\n';
+      break;
+  }
+  
   arr.forEach(function(el) {    
     totalText += el;
   });
+//  Logger.log("filename: "+file);
   _saveAsText(totalText, file);
 }

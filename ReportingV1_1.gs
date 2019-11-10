@@ -1,16 +1,11 @@
 var FIELDS = [];
 var FIELD_OB = {};
-
-function _init(activeCells) {
-  
-  FIELDS = activeCells[0].map(function(el) {
-    return el.toString();
-  });  
-  for (var i=0; i<FIELDS.length; i++) {
-    FIELD_OB[FIELDS[i]] = FIELDS[i];
-  } 
-}
-
+var allsheets = [];
+var AVAILABLE_SHEETS = {
+  active: "Active Fruits",
+  centre: "CTR",
+  longterm: "Dropped/LT"
+};
 var stageSorted = {
   "CONTACT": [], 
   "BUCKET": [],
@@ -19,6 +14,20 @@ var stageSorted = {
   "BB": [],
   "Long term": []
 };
+
+ 
+function _init(activeCells) {
+  FIELDS = activeCells[0].map(function(el) {
+    
+    return el.toString();
+  });  
+  for (var i=0; i<FIELDS.length; i++) {
+    FIELD_OB[FIELDS[i]] = FIELDS[i];
+  } 
+}
+function _nameConvention(name) {
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
 
 function _stageAbr(abr) {
   switch (abr.toUpperCase()) {
@@ -33,25 +42,23 @@ function _stageAbr(abr) {
 }
 
 function _saveAsText(text, fileName) {  
-  DriveApp.createFile(fileName+'_'+new Date(), text,  MimeType.PLAIN_TEXT);
+  DriveApp.createFile(_nameConvention(fileName) + '_' + new Date(), text,  MimeType.PLAIN_TEXT);
 }
 
 function formatDate(date) {
   return Utilities.formatDate(date, "GMT+24", "MM/dd/yyyy");  
 }
 
-function _fullReportWork() {
+function _fullReportWork(rawData) {
   var oneRecord = '';
   var row = [];
-  var sheet = SpreadsheetApp.getActiveSheet();
-  _init(sheet.getDataRange().getValues());
-  var data = sheet.getDataRange().getValues().slice(1);
-  var stage;
-  
-  data.forEach(function(el, colI) {
-    for (var i in el) {
-      if (FIELDS[i] == 'STAGE') {        
-        stage = el[i];
+  _init(rawData);
+  var pureData = rawData.slice(1);
+  var stage;  
+  pureData.forEach(function(el, colI) {
+    for (var i in el) {      
+      if (FIELDS[i] == 'STAGE') {
+        stage = el[i];        
         oneRecord += FIELDS[i] + ": "+el[i] + '\n';
         row.push(FIELDS[i] + ": "+el[i]);
       }      
@@ -70,7 +77,7 @@ function _fullReportWork() {
         SpreadsheetApp.getUi().alert('Invalide stage type: '+stage+"\ncheck record,\n"+el+'\nValid Stages: CT, BT, PP, BB, R4BB, LT');
       }
     }
-  });
+  }); 
   return stageSorted;          
 }
 
@@ -92,12 +99,13 @@ function _fullRptSave(compiledData, file) {
     }
     text += '\n\r\n\r';
   });
-//  Logger.log(text);
   _saveAsText(text, file);
 }
 
 function fullReport() {
-  _fullRptSave(_fullReportWork(), "FullReport");
+  var sheet = SpreadsheetApp.getActiveSheet();
+  var data = sheet.getDataRange().getValue();
+  _fullRptSave(_fullReportWork(data), "FullReport");
 }
 
 
