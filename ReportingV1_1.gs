@@ -1,10 +1,11 @@
 var FIELDS = [];
 var FIELD_OB = {};
 var allsheets = [];
-var AVAILABLE_SHEETS = {
+var REPORT_TYPES = {
   active: "Active Fruits",
   centre: "CTR",
-  longterm: "Dropped/LT"
+  longterm: "Dropped/LT",
+  due_for_update: "Due"
 };
 var stageSorted = {
   "CONTACT": [], 
@@ -20,8 +21,9 @@ function _init(activeCells) {
   FIELDS = activeCells[0].map(function(el) {
     
     return el.toString();
-  });  
-  for (var i=0; i<FIELDS.length; i++) {
+  });
+  var i;
+  for (i=0; i<FIELDS.length; i++) {
     FIELD_OB[FIELDS[i]] = FIELDS[i];
   } 
 }
@@ -50,6 +52,7 @@ function formatDate(date) {
 }
 
 function _fullReportWork(rawData) {
+//  Logger.log(rawData);
   var oneRecord = '';
   var row = [];
   _init(rawData);

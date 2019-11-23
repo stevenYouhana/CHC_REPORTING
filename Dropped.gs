@@ -2,7 +2,7 @@ function _droppedRptWord(name) {
   
   var spreadSheetAURL = "https://docs.google.com/spreadsheets/d/1rc_iBfXCL-sFVaaCqOyJwB1NosCl47EpFiab_nev42c/edit#gid=545305235";   
   var spreadSheetsInA = SpreadsheetApp.openByUrl(spreadSheetAURL)
-  var droppedData = spreadSheetsInA.getSheetByName(AVAILABLE_SHEETS["longterm"])
+  var droppedData = spreadSheetsInA.getSheetByName(REPORT_TYPES["longterm"])
     .getDataRange().getValues();
   
   if (name) {
@@ -13,11 +13,11 @@ function _droppedRptWord(name) {
     _miniRptSave(_miniRptWork(_nameFilterWork(filterData)), 
                  _nameConvention(name)+"_Dropped_LT_MiniReport",
                  _nameConvention(name),
-      AVAILABLE_SHEETS["longterm"]);
+      REPORT_TYPES["longterm"]);
   }
   else {
     _miniRptSave(_miniRptWork(_fullReportWork(droppedData)),
-                 "Dropped_LT_MiniReport", null, AVAILABLE_SHEETS["longterm"]);
+                 "Dropped_LT_MiniReport", null, REPORT_TYPES["longterm"]);
   }
 }
 

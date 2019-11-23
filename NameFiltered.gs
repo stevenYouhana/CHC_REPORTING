@@ -24,7 +24,7 @@ function NameFilter_MiniRpt() {
   _miniRptSave(_miniRptWork(_nameFilterWork(filterData)), 
                _nameConvention(selectedName)+"_MiniReport",
                _nameConvention(selectedName),
-               AVAILABLE_SHEETS["active"]);
+               REPORT_TYPES["active"]);
 }
 
 function _nameFilterWork(compiledData) {  

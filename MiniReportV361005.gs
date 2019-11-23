@@ -75,17 +75,21 @@ function miniReport() {
   var sheet = SpreadsheetApp.getActiveSheet();
   
   var data = sheet.getDataRange().getValues();
-  _miniRptSave(_miniRptWork(_fullReportWork(data)), "MiniReport", null, AVAILABLE_SHEETS["active"]);
+  _miniRptSave(_miniRptWork(_fullReportWork(data)), "MiniReport", null, REPORT_TYPES["active"]);
 }
 
-function _miniRptSave(arr, file, name, sheetType) { 
+function _miniRptSave(arr, file, name, sheetType) {
+//  Logger.log(arr)
   var totalText;
   switch(sheetType) {
-    case AVAILABLE_SHEETS["active"]: 
+    case REPORT_TYPES["active"]: 
       if (name) totalText = '🧾 FRUIT SUMMARY (' + name + '): ' + SCJ_newDate() +'\n';
       else totalText = '🧾 FRUIT SUMMARY '+ SCJ_newDate() +'\n';
       break;
-    case AVAILABLE_SHEETS["centre"]: Logger.log("CTR reports comings soon :)");
+    case REPORT_TYPES["centre"]: Logger.log("CTR reports comings soon :)");
+      break;
+    case REPORT_TYPES["due_for_update"]:
+      totalText = '🧾⏰️ DUE FOR UPDATE! '+ SCJ_newDate() +'\nLast update over five days ago.\n';
       break;
     default: Logger.log("switch(sheetType) { : default: ");
 //      Logger.log('name: '+name);
