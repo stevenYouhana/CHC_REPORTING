@@ -9,9 +9,7 @@ function NameFilter_FullRpt() {
   });
   _fullRptSave(_nameFilterWork(filterData),selectedName+"_FullReport");
 }
-function _nameConvention(name) {
-  return name.charAt(0).toUpperCase() + name.slice(1);
-}
+
 
 function NameFilter_MiniRpt() {
   var sheet = SpreadsheetApp.getActiveSheet();
@@ -23,7 +21,10 @@ function NameFilter_MiniRpt() {
   var filterData =  data.filter(function(el) {
     return el[0].toLowerCase() == selectedName.toLowerCase();
   });
-  _miniRptSave(_miniRptWork(_nameFilterWork(filterData)), selectedName+"_MiniReport");
+  _miniRptSave(_miniRptWork(_nameFilterWork(filterData)), 
+               _nameConvention(selectedName)+"_MiniReport",
+               _nameConvention(selectedName),
+               REPORT_TYPES["active"]);
 }
 
 function _nameFilterWork(compiledData) {  

@@ -53,11 +53,11 @@ function _formatMiniRep(field, rawRecord, textOb) {
   prevStage = stage;
 }
 
-function _miniRptWork(compiledData) {  
+function _miniRptWork(compiledData) {
   var sheet = SpreadsheetApp.getActiveSheet();
   var data = sheet.getDataRange().getValues();
   _init(data);
-  
+//  Logger.log(compiledData);
   var textOb = {text: '', stage: null};
   var finalText = '';
   Object.keys(compiledData).forEach(function(stageData, l) {       
@@ -72,13 +72,35 @@ function _miniRptWork(compiledData) {
 }
 
 function miniReport() {
-  _miniRptSave(_miniRptWork(_fullReportWork()), "MiniReport");
+  var sheet = SpreadsheetApp.getActiveSheet();
+  
+  var data = sheet.getDataRange().getValues();
+  _miniRptSave(_miniRptWork(_fullReportWork(data)), "MiniReport", null, REPORT_TYPES["active"]);
 }
 
-function _miniRptSave(arr, file) {  
-  var totalText = '';
+function _miniRptSave(arr, file, name, sheetType) {
+//  Logger.log(arr)
+  var totalText;
+  switch(sheetType) {
+    case REPORT_TYPES["active"]: 
+      if (name) totalText = '🧾 FRUIT SUMMARY (' + name + '): ' + SCJ_newDate() +'\n';
+      else totalText = '🧾 FRUIT SUMMARY '+ SCJ_newDate() +'\n';
+      break;
+    case REPORT_TYPES["centre"]: Logger.log("CTR reports comings soon :)");
+      break;
+    case REPORT_TYPES["due_for_update"]:
+      totalText = '🧾⏰️ DUE FOR UPDATE! '+ SCJ_newDate() +'\nLast update over five days ago.\n';
+      break;
+    default: Logger.log("switch(sheetType) { : default: ");
+//      Logger.log('name: '+name);
+      if (name) totalText = '🧾 DROPPED AND LONG-TERM FRUIT SUMMARY (' + name + '): ' + SCJ_newDate() +'\n'; 
+      else totalText = '🧾 DROPPED AND LONG-TERM FRUIT SUMMARY '+ SCJ_newDate() +'\n';
+      break;
+  }
+  
   arr.forEach(function(el) {    
     totalText += el;
   });
+//  Logger.log("filename: "+file);
   _saveAsText(totalText, file);
 }

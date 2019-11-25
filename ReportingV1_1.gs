@@ -1,24 +1,39 @@
+/*
+"Ready for BB": [], REMOVED
+added _compileAllFieldsToText
+added new served file "ADVreportin" for ADV reporting
+*/
 var FIELDS = [];
 var FIELD_OB = {};
-
-function _init(activeCells) {
-  
-  FIELDS = activeCells[0].map(function(el) {
-    return el.toString();
-  });  
-  for (var i=0; i<FIELDS.length; i++) {
-    FIELD_OB[FIELDS[i]] = FIELDS[i];
-  } 
-}
-
+var allsheets = [];
+var REPORT_TYPES = {
+  active: "Active Fruits",
+  centre: "CTR",
+  longterm: "Dropped/LT",
+  due_for_update: "Due"
+};
 var stageSorted = {
   "CONTACT": [], 
   "BUCKET": [],
-  "PROSPECT": [], 
-  "Ready for BB": [],
+  "PROSPECT": [],
   "BB": [],
   "Long term": []
 };
+
+ 
+function _init(activeCells) {  
+  FIELDS = activeCells[0].map(function(el) {
+    
+    return el.toString();
+  });
+  var i;
+  for (i=0; i<FIELDS.length; i++) {
+    FIELD_OB[FIELDS[i]] = FIELDS[i];
+  } 
+}
+function _nameConvention(name) {
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
 
 function _stageAbr(abr) {
   switch (abr.toUpperCase()) {
@@ -33,27 +48,25 @@ function _stageAbr(abr) {
 }
 
 function _saveAsText(text, fileName) {  
-  DriveApp.createFile(fileName+'_'+new Date(), text,  MimeType.PLAIN_TEXT);
+  DriveApp.createFile(_nameConvention(fileName) + '_' + new Date(), text,  MimeType.PLAIN_TEXT);
 }
 
 function formatDate(date) {
   return Utilities.formatDate(date, "GMT+24", "MM/dd/yyyy");  
 }
 
-function _fullReportWork() {
+function _fullReportWork(rawData) {
   var oneRecord = '';
   var row = [];
-  var sheet = SpreadsheetApp.getActiveSheet();
-  _init(sheet.getDataRange().getValues());
-  var data = sheet.getDataRange().getValues().slice(1);
-  var stage;
-  
-  data.forEach(function(el, colI) {
-    for (var i in el) {
-      if (FIELDS[i] == 'STAGE') {        
-        stage = el[i];
+  _init(rawData);
+  var pureData = rawData.slice(1);
+  var stage;  
+  pureData.forEach(function(el, colI) {
+    for (var i in el) {      
+      if (FIELDS[i] == 'STAGE') {
+        stage = el[i];        
         oneRecord += FIELDS[i] + ": "+el[i] + '\n';
-        row.push(FIELDS[i] + ": "+el[i]);
+        row.push(FIELDS[i] + ": "+el[i]);        
       }      
       else {            
         oneRecord += FIELDS[i] + ": "+el[i] + '\n';
@@ -67,37 +80,24 @@ function _fullReportWork() {
         row = [];
       }
       else {
-        SpreadsheetApp.getUi().alert('Invalide stage type: '+stage+"\ncheck record,\n"+el+'\nValid Stages: CT, BT, PP, BB, R4BB, LT');
+        SpreadsheetApp.getUi().alert('Invalide stage type: '+stage+"\ncheck record,\n"+el+'\nValid Stages: CT, BT, PP, BB, LT');
       }
     }
-  });
+  }); 
   return stageSorted;          
 }
 
+
 function _fullRptSave(compiledData, file) {
-  var text = '📄FRUIT REPORT: ' + SCJ_newDate() + '\n\r'; 
-  Object.keys(compiledData).forEach(function(stage) {
-    text += stage  + ": " + compiledData[stage].length +'\n\r';
-    if (compiledData[stage].length == 0 ) text += '_ \n\r';
-    else {
-      compiledData[stage].forEach(function(item) {
-        for (var i=0; i<item.length; i++) {
-          if (item[i].substring(0, item[i].indexOf(':')) == FIELD_OB["CELL MEMBER"]) {
-            text += item[i].substring(item[i].indexOf(':')+2) + '\n';
-          }
-          else if (item[i].substring(0, item[i].indexOf(':')) != "STAGE") text += item[i] + '\n';
-        }
-        text += '\n';        
-      });
-    }
-    text += '\n\r\n\r';
-  });
-//  Logger.log(text);
+  var title = '📄FRUIT REPORT: ' + SCJ_newDate() + '\n\r'; 
+  _compileAllFieldsToText(compiledData, title);
   _saveAsText(text, file);
 }
 
 function fullReport() {
-  _fullRptSave(_fullReportWork(), "FullReport");
+  var sheet = SpreadsheetApp.getActiveSheet();
+  var data = sheet.getDataRange().getValues();
+  _fullRptSave(_fullReportWork(data), "FullReport");
 }
 
 
