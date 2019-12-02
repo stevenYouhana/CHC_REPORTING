@@ -69,11 +69,11 @@ function _formatHeadings(heading) {
       return heading.match('[A-Za-z]+')[0];
   return '';
 }
-function _formatMemberInfo(member) {
-  var clean = member.replace(/,+./g, '\n');
-  Logger.log(clean);
-  if (member.match('[a-zA-Z()0-9:].+')) {    
-    return member.match('[a-zA-Z()0-9:].+')[0];
+function _formatMemberInfo(member, clean) {
+  clean = member.replace(/,+./g, '\n');
+//  Logger.log(clean);
+  if (clean.match('[a-zA-Z()0-9:].+')) {    
+    return clean.match('[a-zA-Z()0-9:].+')[0];
   }
   return '';
 }
@@ -87,6 +87,7 @@ function _sortResults() {
   var formatted;
 
   lines.forEach(function(e) {    
+    var cleanMember;
     formatted = _formatHeadings(e);    
     if (schedule.hasOwnProperty(formatted.toUpperCase())) {
       day = formatted.toUpperCase();
@@ -99,7 +100,7 @@ function _sortResults() {
         day = formatted.toUpperCase();
       }
       else {   
-        schedule[day][timeOfDay].push(_formatMemberInfo(e));  //FORMAT MEMBERS IFNO EDIT
+        schedule[day][timeOfDay].push(_formatMemberInfo(e, cleanMember));
       }
     }    
   });
@@ -113,7 +114,8 @@ function _displayShedule() {
     for (var time in schedule[day]) {
       text += '⏳ ' + time + ':\n';
       schedule[day][time].forEach(function(member) {
-        text += member + '\n';
+        if (member)
+          text += member + '\n';
       });
       text += '\n';
     }
@@ -126,5 +128,5 @@ function EV_Sch() {
   _saveAsText(_displayShedule(), "EV_schedule");
 }
 function _saveAsText(text, fileName) {  
-//  DriveApp.createFile(fileName + '_' + new Date(), text,  MimeType.PLAIN_TEXT);
+  DriveApp.createFile(fileName + '_' + new Date(), text,  MimeType.PLAIN_TEXT);
 }
